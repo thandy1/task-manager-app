@@ -15,7 +15,7 @@ backend/src/main/resources/application.properties
 
 # Node / React
 frontend/node_modules/
-frontend/build/
+frontend/dist/
 frontend/.env
 
 # Environment files
