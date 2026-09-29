@@ -1,6 +1,7 @@
-# Task Management Web Application
+# Task Manager
 
-A full-stack task management application built as a learning project.
+A full-stack task management application.
+
 
 ## Stack
 
