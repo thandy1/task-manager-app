@@ -1,4 +1,4 @@
-# Task Manager v2
+# Task Management Web Application
 
 A full-stack task management application built as a learning project.
 
