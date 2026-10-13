@@ -1,0 +1,21 @@
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-option:hover {
+    background: var(--bg);
+}
+
+.filter-count {
+    background: var(--green);
+    color: white;
+    border-radius: 999px;
+    padding: 0 7px;
+    font-size: 0.75rem;
+}
