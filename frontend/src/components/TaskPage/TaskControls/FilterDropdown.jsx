@@ -10,17 +10,17 @@ const FILTERS = [
     { value: "DONE", label: "Done" },
 ];
 
-export default function FilterDropdown() {
+// selected Stores the values of all currently selected filters.
+// onChange is the setter function to update the state of selectedFilters.
+export default function FilterDropdown({ selected, onChange }) {
     const [isOpen, setIsOpen] = useState(false);
-    // Stores the values of all currently selected filters.
-    const [selected, setSelected] = useState([]); 
 
     function toggleFilter(value) {
         // Remove the filter if selected; otherwise, add it.
         if (selected.includes(value)) {
-            setSelected(selected.filter((item) => item !== value))
+            onChange(selected.filter((item) => item !== value))
         } else {
-            setSelected([...selected, value])
+            onChange([...selected, value])
         }
     }
 
@@ -41,8 +41,7 @@ export default function FilterDropdown() {
                                 <input 
                                     type="checkbox" 
                                     checked={selected.includes(filter.value)}
-                                    onChange={() => toggleFilter(filter.value)}/>
-                                {filter.label}
+                                    onChange={() => toggleFilter(filter.value)}/> {filter.label}
                             </label>
                         </li>
                     ))}

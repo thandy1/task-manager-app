@@ -1,12 +1,11 @@
-import './App.css'
 import Header from './components/Header/Header';
-import TaskPage from './components/Header/TaskPage/TaskPage';
+import TaskPage from './components/TaskPage/TaskPage';
 
 export default function App() {
   return (
     <div className="app">
       <Header />
-      <main style={{ paddingTop: "60px" }}> {/* stops the fixed header from covering content*/}
+      <main style={{ paddingTop: "60px" }}> 
         <TaskPage />
       </main>
     </div>

@@ -1,0 +1,8 @@
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 4px;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
