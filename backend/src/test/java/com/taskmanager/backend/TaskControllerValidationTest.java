@@ -12,12 +12,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static  org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TaskController.class)
+// The annotation starts a slice of the Spring context containing only the web layer,
+// limited to this controller. It loads: TaskController itself, Spring MVC infrastructure,
+// and MockMvc.
+@WebMvcTest(TaskController.class) // Builds mini-app with just the controller
 public class TaskControllerValidationTest {
+    // Field injection of a testing class, JUnit creates the test instance then Spring injects the
+    // bean into the field at runtime.
     @Autowired
-    private MockMvc mockMvc;
+    // MockMvc is a testing class that simulates HTTP request and responses, enabling
+    // the testing of controller logic in isolation without starting up a full http server.
+    private MockMvc mockMvc; // Fake HTTP Client
 
-    @MockitoBean
+    @MockitoBean // fills one dependency the controller needs
     private TaskService taskService;
 
     @Test
@@ -32,6 +39,7 @@ public class TaskControllerValidationTest {
                }
                """;
 
+        // Simulates a post request and expects a 400 response.
         mockMvc.perform(post("/api/tasks")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json))

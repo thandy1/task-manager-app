@@ -1,7 +1,9 @@
 package com.taskmanager.backend.controller;
 
+import com.taskmanager.backend.dto.CreateTaskRequest;
 import com.taskmanager.backend.entity.Task;
 import com.taskmanager.backend.service.TaskService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +36,10 @@ public class TaskController {
 
     // POST /api/tasks - create a new task
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody CreateTaskRequest request) {
+        // Validate the incoming request object
+        Task task = new Task(request.title(), request.description(), request.status(),
+                request.priority(), request.dueDate());
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(task));
     }
 
