@@ -8,6 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static  org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,6 +18,14 @@ import static  org.springframework.test.web.servlet.result.MockMvcResultMatchers
 // and MockMvc.
 @WebMvcTest(TaskController.class) // Builds mini-app with just the controller
 public class TaskControllerValidationTest {
+    // A small helper to remove duplicate `mockMvc.perform(post(...)...) block`.
+    private ResultActions postTask(String json) throws Exception {
+        // Simulates a post request and expects a 400 response.
+        return mockMvc.perform(post("/api/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+    }
+
     // Field injection of a testing class, JUnit creates the test instance then Spring injects the
     // bean into the field at runtime.
     @Autowired
@@ -40,14 +49,9 @@ public class TaskControllerValidationTest {
                    "dueDate": null
                }
                """;
-
-        // Simulates a post request and expects a 400 response.
-        mockMvc.perform(post("/api/tasks")
-                    // Request header metadata
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(json))
-                // Assertion
-                .andExpect(status().isBadRequest());
+        // .andExpect is an assertion method in Spring's testing framework to define
+        // expectations for the results of a request
+        postTask(json).andExpect(status().isBadRequest());
    }
 
    @Test
@@ -61,10 +65,6 @@ public class TaskControllerValidationTest {
               "dueDate": null
             }
             """;
-
-        mockMvc.perform(post("/api/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-            .andExpect(status().isBadRequest());
+        postTask(json).andExpect(status().isBadRequest());
    }
 }
