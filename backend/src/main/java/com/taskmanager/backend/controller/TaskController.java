@@ -37,7 +37,7 @@ public class TaskController {
     // POST /api/tasks - create a new task
     @PostMapping
     public ResponseEntity<Task> createTask(@Valid @RequestBody CreateTaskRequest request) {
-        // Validate the incoming request object
+        // @Valid tells spring to validate the incoming request object first befoe creating the Task object
         Task task = new Task(request.title(), request.description(), request.status(),
                 request.priority(), request.dueDate());
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(task));
