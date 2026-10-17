@@ -67,4 +67,18 @@ public class TaskControllerValidationTest {
             """;
         postTask(json).andExpect(status().isBadRequest());
    }
+
+   @Test
+    void createTask_withTitleOver255Characters_returns400() throws Exception {
+        String json = """
+            {
+              "title": "%s",
+              "description": null,
+              "status": "TODO",
+              "priority": "MEDIUM",
+              "dueDate": null
+            }
+            """.formatted("A".repeat(256));
+        postTask(json).andExpect(status().isBadRequest());
+   }
 }
