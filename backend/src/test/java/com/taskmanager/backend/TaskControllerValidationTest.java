@@ -18,13 +18,6 @@ import static  org.springframework.test.web.servlet.result.MockMvcResultMatchers
 // and MockMvc.
 @WebMvcTest(TaskController.class) // Builds mini-app with just the controller
 public class TaskControllerValidationTest {
-    // A small helper to remove duplicate `mockMvc.perform(post(...)...) block`.
-    private ResultActions postTask(String json) throws Exception {
-        // Simulates a post request and expects a 400 response.
-        return mockMvc.perform(post("/api/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json));
-    }
 
     // Field injection of a testing class, JUnit creates the test instance then Spring injects the
     // bean into the field at runtime.
@@ -38,47 +31,46 @@ public class TaskControllerValidationTest {
     @MockitoBean // fills one dependency the controller needs.
     private TaskService taskService;
 
+    // Helper to remove duplicate `mockMvc.perform(post(...)...) block`.
+    private ResultActions postTask(String json) throws Exception {
+        // Simulates a post request and expects a 400 response.
+        return mockMvc.perform(post("/api/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+    }
+
+    // Helper to generate a JSON string representation of a Task object
+    private String taskJson(String title, String priority) {
+        return """
+                {
+                "title" : %s,
+                "description": null,
+                "status": "TODO",
+                "priority": %s,
+                "dueDate": null 
+                }
+                """.formatted(quote(title), quote(title));
+    }
+
+    // Helper that returns a string representation or null of the given data
+    private String quote(String value) {
+        return value == null ? "null" : "\"" + value + "\"";
+    }
+
     @Test
     void createTask_withBlankTitle_returns400() throws Exception {
-        String json = """
-               {
-                   "title": "   ",
-                   "description": null,
-                   "status": "TODO",
-                   "priority": "MEDIUM",
-                   "dueDate": null
-               }
-               """;
         // .andExpect is an assertion method in Spring's testing framework to define
         // expectations for the results of a request
-        postTask(json).andExpect(status().isBadRequest());
+        postTask(taskJson("   ", "MEDIUM")).andExpect(status().isBadRequest());
    }
 
    @Test
     void createTask_missingPriority_returns400() throws Exception {
-        String json = """
-            {
-              "title": "Buy groceries",
-              "description": null,
-              "status": "TODO",
-              "priority": null,
-              "dueDate": null
-            }
-            """;
-        postTask(json).andExpect(status().isBadRequest());
+        postTask(taskJson("Buy groceries", null)).andExpect(status().isBadRequest());
    }
 
    @Test
     void createTask_withTitleOver255Characters_returns400() throws Exception {
-        String json = """
-            {
-              "title": "%s",
-              "description": null,
-              "status": "TODO",
-              "priority": "MEDIUM",
-              "dueDate": null
-            }
-            """.formatted("A".repeat(256));
-        postTask(json).andExpect(status().isBadRequest());
+        postTask(taskJson("A".repeat(256),"MEDIUM")).andExpect(status().isBadRequest());
    }
 }
