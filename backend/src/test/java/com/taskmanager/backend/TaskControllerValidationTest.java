@@ -24,7 +24,9 @@ public class TaskControllerValidationTest {
     // the testing of controller logic in isolation without starting up a full http server.
     private MockMvc mockMvc; // Fake HTTP Client
 
-    @MockitoBean // fills one dependency the controller needs
+    // Replaces Spring's real bean with a Mockito mock; it does not inject
+    // the real service implementation. Need to stub it for specific behavior.
+    @MockitoBean // fills one dependency the controller needs.
     private TaskService taskService;
 
     @Test
@@ -41,8 +43,28 @@ public class TaskControllerValidationTest {
 
         // Simulates a post request and expects a 400 response.
         mockMvc.perform(post("/api/tasks")
+                    // Request header metadata
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(json))
+                // Assertion
                 .andExpect(status().isBadRequest());
-    }
+   }
+
+   @Test
+    void createTask_missingPriority_returns400() throws Exception {
+        String json = """
+            {
+              "title": "Buy groceries",
+              "description": null,
+              "status": "TODO",
+              "priority": null,
+              "dueDate": null
+            }
+            """;
+
+        mockMvc.perform(post("/api/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+            .andExpect(status().isBadRequest());
+   }
 }
