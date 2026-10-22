@@ -13,12 +13,25 @@ export default function TaskPage() {
         { id: 3, title: 'Write modals', description : null, status: 'TODO', priority: 'L', dueDate: '2026-10-01' },
     ]);
 
+    const [activeModal, setActiveModal] = useState(null);
+    const [selectedTask, setSelectedTask] = useState(null);
+
     const [selectedFilters, setSelectedFilters] = useState([]);
 
     const filteredTasks = 
-        selectedFilters.length == 0
+        selectedFilters.length === 0
             ? tasks
             : tasks.filter((task) => selectedFilters.includes(task.status));
+
+    function openModal(type, task = null) {
+        setActiveModal(type);
+        setSelectedTask(task);
+    }
+
+    function closeModal() {
+        setActiveModal(null);
+        setSelectedTask(null);
+    }
 
     return (
         <div className="task-page">
@@ -26,8 +39,14 @@ export default function TaskPage() {
                 taskCount={tasks.length}
                 selectedFilters={selectedFilters}
                 onFilterChange={setSelectedFilters}
+                onAddClick={() => openModal("add")}
+                onClearAllClick={() => closeModal("clearAll")}
             />
-            <TaskList tasks={filteredTasks} />
+            <TaskList 
+                tasks={filteredTasks} 
+                onEditTask={(task) => openModal("edit", task)}
+                onDeleteTask={(task) => openModal("delete", task)}
+            />
             <TaskFooter tasks={tasks} />
         </div>
     );
