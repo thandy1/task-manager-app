@@ -48,6 +48,16 @@ body {
   background: #16a34a;
 }
 
+.btn-red {
+  background: var(--red);
+  border-color: var(--red);
+  color: white;
+}
+
+.btn-red:hover {
+  background: #dc2626;
+}
+
 .btn-red-outline {
   border-color: var(--red);
   color: var(--red);

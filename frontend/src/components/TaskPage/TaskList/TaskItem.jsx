@@ -15,7 +15,7 @@ function formatDate(dueDate) {
 
 // The conditional render hides the date when task.dueDate is null which acts as
 // an optional due date.
-export default function TaskItem({ task }) {
+export default function TaskItem({ task , onEdit, onDelete }) {
     return (
         <li className="task-item">
             <div className="task-info">
@@ -30,9 +30,11 @@ export default function TaskItem({ task }) {
                 {task.dueDate && (
                     <span className={`task-due ${isOverdue(task.dueDate) ? "overdue" : ""}`}>{formatDate(task.dueDate)}</span>
                 )}
-            <TaskActions />
+                <TaskActions 
+                    onEdit={() => onEdit(task)}
+                    onDelete={() => onDelete(task)}
+                />
             </div>
         </li>
-
     );
 }

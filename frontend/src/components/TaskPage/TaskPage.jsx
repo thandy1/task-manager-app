@@ -33,6 +33,7 @@ export default function TaskPage() {
         setSelectedTask(null);
     }
 
+    console.log(activeModal, selectedTask);
     return (
         <div className="task-page">
             <TaskControls 

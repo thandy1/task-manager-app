@@ -2,7 +2,7 @@ import TaskItem from "./TaskItem";
 import EmptyState from "./EmptyState";
 import "./TaskList.css";
 
-export default function TaskList({ tasks }) {
+export default function TaskList({ tasks, onEditTask, onDeleteTask }) {
     // Return EmptyState display when there's no tasks to show.
     if (tasks.length == 0) {
         return <EmptyState />;
@@ -11,7 +11,12 @@ export default function TaskList({ tasks }) {
     return (
         <ul className="task-list">
             {tasks.map((task) => (
-                <TaskItem key={task.id} task={task} />
+                <TaskItem 
+                    key={task.id} 
+                    task={task} 
+                    onEdit={onEditTask}
+                    onDelete={onDeleteTask}
+                />
             ))}
         </ul>
     );
