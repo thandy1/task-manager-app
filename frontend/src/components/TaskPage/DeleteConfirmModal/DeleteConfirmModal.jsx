@@ -1,4 +1,4 @@
-import Modal from "./Modal/Modal";
+import Modal from "../Modal/Modal";
 
 // This component holds no state. It receives the task to show and two callbacks, 
 // and it reports which button was pressed. 

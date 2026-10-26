@@ -2,6 +2,7 @@ import { useState } from "react";
 import TaskControls from "./TaskControls/TaskControls";
 import TaskList from "./TaskList/TaskList";
 import TaskFooter from "./TaskFooter/TaskFooter";
+import DeleteConfirmModal from "./DeleteConfirmModal/DeleteConfirmModal";
 import "./TaskPage.css";
 
 export default function TaskPage() {
@@ -33,6 +34,12 @@ export default function TaskPage() {
         setSelectedTask(null);
     }
 
+    function handleDelete() {
+        // Builds a new array without the selected tasks, which respects the "never mutate state" rule.
+        setTasks(tasks.filter((task) => task.id !== selectedTask.id));
+        closeModal();
+    }
+
     return (
         <div className="task-page">
             <TaskControls 
@@ -48,6 +55,13 @@ export default function TaskPage() {
                 onDeleteTask={(task) => openModal("delete", task)}
             />
             <TaskFooter tasks={tasks} />
+            {activeModal === "delete" && (
+                <DeleteConfirmModal 
+                    task={selectedTask}
+                    onConfirm={handleDelete}
+                    onCancel={closeModal}
+                />
+            )}
         </div>
     );
 
