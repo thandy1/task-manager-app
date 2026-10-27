@@ -3,6 +3,7 @@ import TaskControls from "./TaskControls/TaskControls";
 import TaskList from "./TaskList/TaskList";
 import TaskFooter from "./TaskFooter/TaskFooter";
 import DeleteConfirmModal from "./DeleteConfirmModal/DeleteConfirmModal";
+import ClearAllConfirmModal from "./ClearAllConfirmModal/ClearAllConfirmModal";
 import "./TaskPage.css";
 
 export default function TaskPage() {
@@ -40,6 +41,11 @@ export default function TaskPage() {
         closeModal();
     }
 
+    function handleClearAll() {
+        setTasks([]);
+        closeModal();
+    }
+
     return (
         <div className="task-page">
             <TaskControls 
@@ -47,7 +53,7 @@ export default function TaskPage() {
                 selectedFilters={selectedFilters}
                 onFilterChange={setSelectedFilters}
                 onAddClick={() => openModal("add")}
-                onClearAllClick={() => closeModal("clearAll")}
+                onClearAllClick={() => openModal("clearAll")}
             />
             <TaskList 
                 tasks={filteredTasks} 
@@ -59,6 +65,13 @@ export default function TaskPage() {
                 <DeleteConfirmModal 
                     task={selectedTask}
                     onConfirm={handleDelete}
+                    onCancel={closeModal}
+                />
+            )}
+            {activeModal === "clearAll" && (
+                <ClearAllConfirmModal
+                    taskCount={tasks.length}
+                    onConfirm={handleClearAll}
                     onCancel={closeModal}
                 />
             )}

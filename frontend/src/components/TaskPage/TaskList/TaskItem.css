@@ -7,6 +7,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .task-meta {
@@ -98,25 +99,45 @@
     display: flex;
     gap: 6px;
     opacity: 0;
+    transition: opacity 0.15s ease;
 }
 
-.task-item:hover .task-actions {
+.task-item:hover .task-actions,
+.task-item:focus-within .task-actions {
     opacity: 1;
 }
 
 .action-btn {
+    background: none;
     border: none;
-    border-radius: 6px;
     padding: 6px;
-    color: white;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
+    color: var(--text);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.action-btn:hover {
+    filter: brightness(0.9);
+    transform: scale(1.1);
 }
 
 .action-edit {
     background: var(--yellow);
 }
 
+.action-edit:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
 .action-delete {
     background: var(--red);
+}
+
+.action-delete:hover {
+    background: #fef2f2;
+    color: var(--red);
 }

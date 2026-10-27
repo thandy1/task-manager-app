@@ -32,6 +32,12 @@ body {
   color: var(--text);
   font-size: 0.9rem;
   cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn:hover {
@@ -67,6 +73,22 @@ body {
   background: #fef2f2;
 }
 
+.btn:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.btn-green:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.btn-red:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.btn-red-outline:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
 .dropdown {
   position: relative;
 }
@@ -94,6 +116,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: background-color 0.15s ease;
 }
 
 .dropdown-menu button:hover {
