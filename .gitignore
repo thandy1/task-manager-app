@@ -1,28 +1,26 @@
-# Documentation
+# Docs (remove this line if docs/ holds graded material)
 docs/*
-backend/HELP.md
 
-# IntelliJ
-backend/.idea/
-**/.idea/
-*.iml
+# Node (matches backend/, frontend/, frontend-old/)
+node_modules/
+dist/
+coverage/
 
-# Maven
-backend/target/
-
-# Spring Boot - sensitive configuration
-backend/src/main/resources/application.properties
-
-# Node / React
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-
-# Environment files
+# Environment files (secrets) - never commit
 .env
-*.env
+.env.*
+!.env.example
+
+# Old Spring Boot build output and local config
+backend-spring-old/target/
+backend-spring-old/HELP.md
+backend-spring-old/src/main/resources/application.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
 
 # OS files
 .DS_Store
 Thumbs.db
-
