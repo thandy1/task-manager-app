@@ -4,6 +4,7 @@ import TaskList from "./TaskList/TaskList";
 import TaskFooter from "./TaskFooter/TaskFooter";
 import DeleteConfirmModal from "./DeleteConfirmModal/DeleteConfirmModal";
 import ClearAllConfirmModal from "./ClearAllConfirmModal/ClearAllConfirmModal";
+import AddTaskModal from "./AddTaskModal/AddTaskModal";
 import "./TaskPage.css";
 
 export default function TaskPage() {
@@ -16,6 +17,7 @@ export default function TaskPage() {
     ]);
 
     const [activeModal, setActiveModal] = useState(null);
+
     const [selectedTask, setSelectedTask] = useState(null);
 
     const [selectedFilters, setSelectedFilters] = useState([]);
@@ -33,6 +35,13 @@ export default function TaskPage() {
     function closeModal() {
         setActiveModal(null);
         setSelectedTask(null);
+    }
+
+    function handleAdd(newTask) {
+        // NOTE: Date.now() is temporary unique id. 
+        // Spring Boot will assign a real one later and this line will change.
+        setTasks([...tasks, {"id": Date.now(), ...newTask}])
+        closeModal();
     }
 
     function handleDelete() {
@@ -72,6 +81,12 @@ export default function TaskPage() {
                 <ClearAllConfirmModal
                     taskCount={tasks.length}
                     onConfirm={handleClearAll}
+                    onCancel={closeModal}
+                />
+            )}
+            {activeModal === "add" && (
+                <AddTaskModal 
+                    onSave={handleAdd}
                     onCancel={closeModal}
                 />
             )}

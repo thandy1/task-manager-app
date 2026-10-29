@@ -127,17 +127,7 @@
     background: var(--yellow);
 }
 
-.action-edit:hover {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-
 .action-delete {
     background: var(--red);
 }
 
-.action-delete:hover {
-    background: #fef2f2;
-    color: var(--red);
-}
