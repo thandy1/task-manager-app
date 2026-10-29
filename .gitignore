@@ -24,3 +24,6 @@ backend-spring-old/src/main/resources/application.properties
 # OS files
 .DS_Store
 Thumbs.db
+
+# TypeScript build cache
+*.tsbuildinfo
