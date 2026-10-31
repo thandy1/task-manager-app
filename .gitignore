@@ -10,8 +10,8 @@ backend/.idea/
 # Maven
 backend/target/
 
-# Spring Boot - sensitive configuration
-backend/src/main/resources/application.properties
+# Spring Boot Old
+backend-spring-old/
 
 # Node / React
 frontend/node_modules/
