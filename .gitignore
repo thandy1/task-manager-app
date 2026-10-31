@@ -1,28 +1,6 @@
 # Documentation
 docs/*
-backend/HELP.md
 
-# IntelliJ
-backend/.idea/
-**/.idea/
-*.iml
-
-# Maven
-backend/target/
-
-# Spring Boot Old
-backend-spring-old/
-
-# Node / React
-frontend/node_modules/
-frontend/dist/
-frontend/.env
-
-# Environment files
-.env
-*.env
-
-# OS files
-.DS_Store
-Thumbs.db
-
+# Archived projects
+/backend-spring-old/
+/frontend-old/
