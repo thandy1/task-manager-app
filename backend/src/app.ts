@@ -1,12 +1,20 @@
 import express from "express";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 export const app = express();
 
-// Built-in middleware that parses incoming JSON request bodies
-// into req.body
+// This is regular middleware. It parses incoming JSON and makes the resulting JavaScript object available through req.body 
+// Middleware executes before routes, malformed JSON gets passed as an error
+// to the Error Handling Middleware.
 app.use(express.json());
 
 // Temporary route just to confirm everything works.
 app.get("/health", (_req, res) => {
     res.json({status: "ok"});
 });
+
+// Application-Level Middleware
+// Registration order determines middleware execution order.
+// Must stay last: unmatched routes first, then the error handler.
+app.use(notFoundHandler);
+app.use(errorHandler);
