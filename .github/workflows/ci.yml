@@ -30,7 +30,7 @@ jobs:
                 DATABASE_URL: postgresql://user:password@localhost:5432/placeholder
 
             - name: Typecheck
-              run: npx run typecheck
+              run: npm run typecheck
 
             - name: Run tests
               run: npm test
