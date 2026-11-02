@@ -1,3 +1,4 @@
+// Application configuration and middleware pipeline
 import express from "express";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
@@ -13,7 +14,6 @@ app.get("/health", (_req, res) => {
     res.json({status: "ok"});
 });
 
-// Application-Level Middleware
 // Registration order determines middleware execution order.
 // Must stay last: unmatched routes first, then the error handler.
 app.use(notFoundHandler);

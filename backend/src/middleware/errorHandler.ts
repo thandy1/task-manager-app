@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError, ValidateError, ValidationDetail, NotFoundError } from "../errors/AppError.js";
+import { AppError, ValidationError, ValidationDetail, NotFoundError } from "../errors/AppError.js";
 
 // Regular Middleware: 3 parameters
 // Runs when no route matched. It doesn't respond itself; it creates a

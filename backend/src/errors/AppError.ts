@@ -29,7 +29,7 @@ export class NotFoundError extends AppError {
 }
 
 // 400: the request data is invalid. `details` will hold the per-field problems.
-export class ValidateError extends AppError {
+export class ValidationError extends AppError {
     constructor(
         message = "Validation failed", 
         details?: ValidationDetail[],
