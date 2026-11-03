@@ -20,7 +20,6 @@ export class AppError extends Error {
     }
 }
 
-
 // 404: resource the client asked for doesn't exist.
 export class NotFoundError extends AppError {
     constructor(message = "Resource not found") {

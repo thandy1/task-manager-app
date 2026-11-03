@@ -1,5 +1,28 @@
+/* Test suites to test against Task schemas directly */
+
 import { describe, it, expect } from "vitest";
 import { createTaskSchema, updateTaskSchema, taskIdParamSchema } from "./task.schema.js";
+
+// parse() validates a JavaScript object against a given schema. 
+// If valid, returns the validated JavaScript Object, otherwise throws ZodError.
+// Error Handler middleware catches and builds a error HTTP response to the client.
+
+// safeParse() validates a JavaScript object against a given schema.
+// If valid or invalid, return a JavaScript object describing the outcome:
+/*
+          {
+              success: true,
+              data: {
+                  title: "Buy milk"
+              }
+          }
+*/
+/* 
+          {
+              success: false,
+              error: ZodError
+          }
+*/
 
 describe("createTaskSchema", () => {
   it("accepts a title-only body (FR1)", () => {

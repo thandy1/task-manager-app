@@ -1,18 +1,19 @@
 import { describe, it, expect, vi } from "vitest";
 import type { Request, Response } from "express";
-import { validate } from "./validate.js";
+import { validateRequest } from "./validateRequest.js";
 import { createTaskSchema } from "../schemas/task.schema.js";
 import { ValidationError } from "../errors/AppError.js";
 
+// Testing helper. Simulates parts of an Express request that the middleware needs.
 const run = (body: unknown) => {
-  const req = { body } as Request;
-  const next = vi.fn();
-  const middleware = validate(createTaskSchema, "body");
-  middleware(req, {} as Response, next);
+  const req = { body } as Request; // Create a fake Express Request
+  const next = vi.fn(); // Create a mock next function. Can check if it was called, times called, and arguments received. 
+  const middleware = validateRequest(createTaskSchema, "body"); // Retrieves the middleware function from the factory.
+  middleware(req, {} as Response, next); // Manually executes the middleware function from the factory.
   return { req, next };
 };
 
-describe("validate middleware", () => {
+describe("validateRequest middleware", () => {
   it("calls next and replaces body with trimmed data on valid input (NFR2)", () => {
     const { req, next } = run({ title: "  Hello  " });
     expect(next).toHaveBeenCalledOnce();
@@ -34,7 +35,7 @@ describe("validate middleware", () => {
   it("does not call next when validation fails", () => {
     const next = vi.fn();
     try {
-      validate(createTaskSchema, "body")({ body: {} } as Request, {} as Response, next);
+      validateRequest(createTaskSchema, "body")({ body: {} } as Request, {} as Response, next);
     } catch {
       // expected
     }
