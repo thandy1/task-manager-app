@@ -1,6 +1,7 @@
 // Application configuration and middleware pipeline
 import express from "express";
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { notFoundHandler } from "./middleware/notFoundHandler.js";
 
 export const app = express();
 

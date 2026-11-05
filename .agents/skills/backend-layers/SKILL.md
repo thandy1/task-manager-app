@@ -16,3 +16,4 @@ description: Use when creating or editing Express routes, controllers, services,
 - Routes live under `/tasks`. PATCH for edits. DELETE `/tasks` clears all.
 - Use `type` imports for types. Export named, not default.
 - Keep every function small and typed; no `any`.
+- Limits: title max 255, description max 5000 (constants in `src/schemas/task.schema.ts`). Never hardcode them elsewhere.
