@@ -9,7 +9,7 @@ type RequestSource = "body" | "params"; // This type accepts "body" or "params".
 export const validateRequest = 
     (schema: ZodType, source: RequestSource) =>
     // Return an Express middleware function
-    (req: Request, _res:Response, next: NextFunction): void => {
+    (req: Request, res:Response, next: NextFunction): void => {
         const result = schema.safeParse(req[source]); // Validate and transform request "body" or "params"
         // If validation fails, Zod issues are converted into ValidationDetail objects and passed to the error handler.
         if (!result.success) {
@@ -17,13 +17,18 @@ export const validateRequest =
                 field: issue.path.join(".") || source,  // (e.g. ["title"] -> "title", ["user", "email"] -> "user.email")
                 message: issue.message,
             }));
-            throw new ValidationError("Validation failed", details);
+            next(new ValidationError("Validation failed", details));
+            return;
         }
 
-        // If validation succeeds, the parsed data is made available to subsequent request processing.
+        // Body: replace so the controller sees trimmed/cleaned data.
+        // Params: req.params is typed as strings, so keep the parsed (coerced).
+        // values in res.locals instead; controllers read res.locals.params
         if (source === "body") {
             req.body = result.data;
+        } else {
+            res.locals[source] = result.data;
         }
 
-        next(); // continue request processing 
+        next(); 
     };

@@ -10,6 +10,7 @@ Task Manager monorepo: `backend/` (Express 5 + TypeScript ESM + Prisma 7 + Postg
 - Import Prisma types from `src/generated/prisma/client.js`, never `@prisma/client`.
 - Commit style: `type(scope): description`. Do not commit; the user commits.
 - Read `.agents/skills/` before writing backend code.
+- Dont comment lines that just restate the code.
 
 ## Commands (run in backend/)
 - `npx tsc --noEmit` typecheck

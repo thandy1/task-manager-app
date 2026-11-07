@@ -1,17 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError, ValidationError, ValidationDetail, NotFoundError } from "../errors/AppError.js";
-
-// Regular Middleware, first parameter must be a Request object so express recognize it.
-// Runs when no route matched. It doesn't respond itself; it creates a
-// NotFoundError and passes it to the error middleware via next(error).
-export function notFoundHandler(
-    req: Request, 
-    _res: Response, 
-    next: NextFunction
-) {
-    next(new NotFoundError(`Route ${req.method} ${req.path} not found`));
-}
-
 // Error Handler Middleware, first parameter must be an error so express recognizes it.
 // centralizes error handling and builds appropriate response to the client.
 // Express recognizes an error handler by its FOUR parameters, so `_next`
