@@ -5,7 +5,7 @@ description: Use when creating or editing Express routes, controllers, services,
 
 ## Layer responsibilities
 - **Route** (`src/routes/`): maps method + path to middleware + controller. No logic.
-- **Controller** (`src/controllers/`): reads validated input from req, calls ONE service method, sends the response with the correct status. No Prisma, no business rules.
+- **Controller** (`src/controllers/`): reads validated input (`req.body`, `res.locals.params`), calls ONE service method, sends the response with the correct status. No Prisma, no business rules.
 - **Service** (`src/services/`): business rules. Throws `NotFoundError` when the repository returns null. Converts `dueDate` "YYYY-MM-DD" strings to `Date` before calling the repository.
 - **Repository** (`src/repositories/`): thin wrapper over Prisma. Only file type that imports the Prisma client. No business rules.
 
