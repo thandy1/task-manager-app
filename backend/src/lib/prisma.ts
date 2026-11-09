@@ -1,4 +1,3 @@
-import "dotenv/config"; // loads .env into process.env before we read DATABASE_URL
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/prisma/client.js";
 
