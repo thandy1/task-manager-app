@@ -1,7 +1,7 @@
 /* Test suites to test against Task schemas directly */
 
 import { describe, it, expect } from "vitest";
-import { createTaskSchema, updateTaskSchema, taskIdParamSchema } from "./task.schema.js";
+import { createTaskSchema, updateTaskSchema, taskIdParamSchema } from "@src/schemas/task.schema.js";
 
 // parse() validates a JavaScript object against a given schema. 
 // If valid, returns the validated JavaScript Object, otherwise throws ZodError.
