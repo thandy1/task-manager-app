@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { taskService } from "../services/task.service.js";
+import { toTaskResponse } from "../mappers/task.mapper.js";
 
 export const taskController = {
     /**
@@ -11,6 +12,6 @@ export const taskController = {
      */
     async create(req: Request, res: Response) {
         const task = await taskService.createTask(req.body);
-        res.status(201).json(task);
+        res.status(201).json(toTaskResponse(task));
     },
 }
