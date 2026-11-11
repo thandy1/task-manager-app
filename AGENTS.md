@@ -13,8 +13,11 @@ Task Manager monorepo: `backend/` (Express 5 + TypeScript ESM + Prisma 7 + Postg
 - Use the matching skill in `.agents/skills/` before writing backend code.
 
 ## Comments
-- Explain why, not what. Never comment code that restates itself.
-- TSDoc only on exported service and repository methods.
+- Every exported service and repository method must have a TSDoc comment explaining why, not what.
+- No other comments unless the reason for the code isn't obvious.
+
+## Feature flags
+- Only POST /tasks is behind `FEATURE_CREATE_TASK`, applied to that route in `task.routes.ts`. Do not add flags or touch `app.ts` unless asked.
 
 ## Commands (run in backend/)
 - `npx tsc --noEmit` typecheck
