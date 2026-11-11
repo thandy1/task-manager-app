@@ -16,7 +16,7 @@ describe("taskService.createTask", () => {
     it("converts the dueDate string to a Date before calling the repository", async () => {
         await taskService.createTask({
             title: "Write tests",
-            // description: null,
+            // description: undefined, meaning the user did not include a dueDate.
             status: "TODO",
             priority: "LOW",
             dueDate: "2026-12-09",
