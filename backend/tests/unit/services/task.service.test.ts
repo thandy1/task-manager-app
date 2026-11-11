@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect, vi } from "vitest";
-import { taskRepository } from "@src/repository/task.repository.js";
+import { taskRepository } from "@src/repositories/task.repository.js";
 import { taskService } from "@src/services/task.service.js";
 
 // Mock repository

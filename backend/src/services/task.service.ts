@@ -1,4 +1,4 @@
-import { taskRepository } from "../repository/task.repository.js";
+import { taskRepository } from "../repositories/task.repository.js";
 import { NotFoundError } from "../errors/AppError.js";
 import { createTaskSchema } from "../schemas/task.schema.js";
 import type { CreateTaskInput } from "../schemas/task.schema.js";
@@ -22,7 +22,7 @@ export const taskService = {
      * because the repository (and Prisma) work with Date objects, not API strings.
      */
     async createTask(input: CreateTaskInput) {
-        const { dueDate, ...rest} = input;
+        const { dueDate, ...rest } = input;
         return taskRepository.create({
             ...rest,
             dueDate: dueDate ? new Date(dueDate) : undefined,
