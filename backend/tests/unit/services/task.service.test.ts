@@ -3,7 +3,7 @@ import { taskRepository } from "@src/repositories/task.repository.js";
 import { taskService } from "@src/services/task.service.js";
 
 // Mock repository
-vi.mock("@src/repository/task.repository.ts", () => ({
+vi.mock("@src/repositories/task.repository.ts", () => ({
     taskRepository: { create: vi.fn() },
 }));
 
