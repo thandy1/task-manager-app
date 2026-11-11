@@ -14,7 +14,8 @@ export const validateRequest =
         // If validation fails, Zod issues are converted into ValidationDetail objects and passed to the error handler.
         if (!result.success) {
             const details: ValidationDetail[] = result.error.issues.map((issue) => ({
-                field: issue.path.join(".") || source,  // (e.g. ["title"] -> "title", ["user", "email"] -> "user.email")
+                // (e.g. ["title"] -> "title", ["user", "email"] -> "user.email")
+                field: issue.path.join(".") || source,  
                 message: issue.message,
             }));
             next(new ValidationError("Validation failed", details));
