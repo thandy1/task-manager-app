@@ -17,12 +17,8 @@ app.get("/health", (_req, res) => {
     res.json({status: "ok"});
 });
 
-// Flagged: the route s only registered when FEATURE_CREATE_TASK=true.
-// When off, /tasks is never mounted, so requests fall through to notFoundHandler (404).
-// NOTE: remove the feature flag when the route is tested and functional.
-if (features.createTask) {
-    app.use("/tasks", taskRouter);
-}
+// Mount route registration for routing
+app.use("/tasks", taskRouter);
 
 // Registration order determines middleware execution order.
 // Must stay last: unmatched routes first, then the error handler.
