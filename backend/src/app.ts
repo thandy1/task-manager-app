@@ -2,7 +2,7 @@
 import express from "express";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
-import { features } from "./config/features.js";
+import { features } from "./configs/features.js";
 import { taskRouter } from "./routes/task.routes.js";
 
 export const app = express();
@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Temporary route just to confirm everything works.
 app.get("/health", (_req, res) => {
-    res.json({status: "ok"});
+    res.json({ status: "ok" });
 });
 
 // Mount route registration for routing
