@@ -1,6 +1,5 @@
 import { taskRepository } from "../repositories/task.repository.js";
 import { NotFoundError } from "../errors/AppError.js";
-import { createTaskSchema } from "../schemas/task.schema.js";
 import type { CreateTaskInput } from "../schemas/task.schema.js";
 
 export const taskService = {
