@@ -1,26 +1,25 @@
-// Application configuration and middleware pipeline
+// Builds the Express app: middleware, routes, and error handling
 import express from "express";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
-import { features } from "./configs/features.js";
 import { taskRouter } from "./routes/task.routes.js";
 
 export const app = express();
 
-// This is regular middleware. It parses incoming JSON and makes the resulting JavaScript object available through req.body 
-// Middleware executes before routes, malformed JSON gets passed as an error
-// to the Error Handling Middleware.
+// Parses JSON request bodies into req.body.
+// Malformed JSON is passed on to the error handler.
 app.use(express.json());
 
-// Temporary route just to confirm everything works.
+// Health check stays unversioned: it's infrastructure, not part of the API contract.
 app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
 });
 
-// Mount route registration for routing
-app.use("/tasks", taskRouter);
+// Mount path
+// All task endpoints live under /api/v1/tasks.
+app.use("/api/v1/tasks", taskRouter);
 
-// Registration order determines middleware execution order.
-// Must stay last: unmatched routes first, then the error handler.
+// Order matters: these must be last. Unmatched URLs hit notFoundHandler,
+// and any error thrown above ends up in errorHandler.
 app.use(notFoundHandler);
 app.use(errorHandler);

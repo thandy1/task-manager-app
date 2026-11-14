@@ -9,7 +9,7 @@ type RequestSource = "body" | "params"; // This type accepts "body" or "params".
 export const validateRequest = 
     (schema: ZodType, source: RequestSource) =>
     // Return an Express middleware function
-    (req: Request, res:Response, next: NextFunction): void => {
+    (req: Request, res: Response, next: NextFunction): void => {
         const result = schema.safeParse(req[source]); // Validate and transform request "body" or "params"
         // If validation fails, Zod issues are converted into ValidationDetail objects and passed to the error handler.
         if (!result.success) {
