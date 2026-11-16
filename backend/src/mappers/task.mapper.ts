@@ -15,7 +15,7 @@ export type TaskResponse = Omit<Task, "dueDate"> & {
  * Prisma `@db.Date` columns as a Date at UTC midnight on retrieval calls. Because
  * JS has no date-only type, the mapper converts that back to ISO date 
  * format `YYYY-MM-DD` string the client originally sent, so the round trip is symmetric. 
- * Slicing the UTC ISO string keeps the calender day stable regardless of 
+ * Slicing the UTC ISO string keeps the calendar day stable regardless of 
  * the server's time zone.
  */
 export function toTaskResponse(task: Task): TaskResponse {

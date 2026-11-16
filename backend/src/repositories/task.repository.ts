@@ -3,6 +3,15 @@ import type { Prisma } from "../generated/prisma/browser.js";
 
 export const taskRepository = {
     /**
+     * Updates only the fields present in `data`. Prisma skips `undefined`
+     * fields and writes `null` as NULL. Throws P2025 when no row matches,
+     * which the service translates into NotFoundError.
+     */
+    update(id: number, data: Prisma.TaskUpdateInput) {
+        return prisma.task.update({ where: { id }, data});
+    },
+
+    /**
      * Looks up a task by its ID. Returns `null` when no row matches so the
      * service can decide whether the missing task should become a not-found error.
      */

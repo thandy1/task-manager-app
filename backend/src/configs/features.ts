@@ -7,4 +7,6 @@
 //   2. Add FEATURE_MY_FEATURE=false to .env.example
 //   3. Gate the route:     if (features.myFeature) { router.post(...) }
 //   4. Delete all three once the feature is finished.
-export const features = {};
+export const features = {
+    updateTasks: process.env.FEATURE_UPDATE_TASK === "true",
+};
