@@ -4,6 +4,16 @@ import { toTaskResponse } from "../mappers/task.mapper.js";
 
 export const taskController = {
     /**
+     * Reads the validated id from `res.locals.params` and the validated
+     * partial body from `req.body`, then sends the updated task with a 
+     * 200 status.
+     */
+    async update(req: Request, res: Response) {
+        const task = await taskService.updateTask(res.locals.params.id, req.body);
+        res.status(200).json(toTaskResponse(task));
+    },
+
+    /**
      * Reads the validated ID from `res.locals.params`, retrieves the task,
      * and sends its API response with a 200 status code.
      */
@@ -14,7 +24,7 @@ export const taskController = {
 
     /**
      * Reads `req.body`, which `validateRequest` already replaced with parsed data,
-     * calls one `createTask` service method, and send 201 status code in the response
+     * calls `createTask` service method, and sends 201 status code in the response
      * to the client.
      * 
      * If rejected, Express forwards the error to `errorHandler`.

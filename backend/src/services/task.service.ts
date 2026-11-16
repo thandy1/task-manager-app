@@ -1,8 +1,29 @@
 import { taskRepository } from "../repositories/task.repository.js";
 import { NotFoundError } from "../errors/AppError.js";
-import type { CreateTaskInput } from "../schemas/task.schema.js";
+import type { CreateTaskInput, UpdateTaskInput } from "../schemas/task.schema.js";
+import { Prisma } from "../generated/prisma/client.js";
 
 export const taskService = {
+    /**
+     * Applies a partial update. Convert dueDate to a Date (null stays null to clear it,
+     * undefined stays undefined to leave it alone) and turns Prisma's "record not found"
+     * error into a 404, so the repository stays a thin wrapper.
+     */
+    async updateTask(id: number, input: UpdateTaskInput) {
+        const { dueDate, ...rest} = input;
+        try {
+            return await taskRepository.update(id, {
+                ...rest,
+                dueDate: dueDate ? new Date(dueDate) : dueDate,
+            });
+        } catch (err) {
+            if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+                throw new NotFoundError("Task not found");
+            }
+            throw err;
+        }
+    },
+
     /**
      * Returns the task with the requested ID, or throws when the repository
      * reports that no matching task exists.
