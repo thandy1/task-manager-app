@@ -2,6 +2,7 @@ import { beforeEach, describe, it, expect, vi } from "vitest";
 import { taskRepository } from "@src/repositories/task.repository.js";
 import { taskService } from "@src/services/task.service.js";
 import { NotFoundError } from "@src/errors/AppError.js";
+import { Prisma } from "@src/generated/prisma/client.js";
 
 // Mock repository
 vi.mock("@src/repositories/task.repository.ts", () => ({
@@ -110,6 +111,9 @@ describe("taskService.updateTask", () => {
     });
 
     it("throws NotFoundError when Prisma reports P2025", async () => {
+        // Simulate Prisma's P2025 error, which occurs when an operation
+        // depends on a record that doesn't exist (e.g., updating a nonexistent task).
+        // The service should translate this database error into a NotFoundError.
         vi.mocked(taskRepository.update).mockRejectedValue(
             new Prisma.PrismaClientKnownRequestError("Record not found", {
                 code: "P2025",
