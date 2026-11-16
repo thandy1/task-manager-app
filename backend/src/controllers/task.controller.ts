@@ -4,6 +4,15 @@ import { toTaskResponse } from "../mappers/task.mapper.js";
 
 export const taskController = {
     /**
+     * Serializes every task through the shared response mapper so date-only
+     * fields keep the same API shape as the single-task endpoint.
+     */
+    async getAll(_req: Request, res: Response) {
+        const tasks = await taskService.getAllTasks();
+        res.status(200).json(tasks.map(toTaskResponse));
+    },
+
+    /**
      * Reads the validated ID from `res.locals.params`, retrieves the task,
      * and sends its API response with a 200 status code.
      */

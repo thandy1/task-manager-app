@@ -3,6 +3,14 @@ import type { Prisma } from "../generated/prisma/browser.js";
 
 export const taskRepository = {
     /**
+     * Keeps list ordering consistent at the data boundary so every caller gets
+     * the newest tasks first.
+     */
+    findAll() {
+        return prisma.task.findMany({ orderBy: { createdAt: "desc" } });
+    },
+
+    /**
      * Looks up a task by its ID. Returns `null` when no row matches so the
      * service can decide whether the missing task should become a not-found error.
      */

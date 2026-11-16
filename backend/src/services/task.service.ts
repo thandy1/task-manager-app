@@ -4,6 +4,14 @@ import type { CreateTaskInput } from "../schemas/task.schema.js";
 
 export const taskService = {
     /**
+     * Lets the repository provide the complete list without adding business
+     * rules to a read operation that has none.
+     */
+    getAllTasks() {
+        return taskRepository.findAll();
+    },
+
+    /**
      * Returns the task with the requested ID, or throws when the repository
      * reports that no matching task exists.
      */
