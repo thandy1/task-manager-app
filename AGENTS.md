@@ -17,7 +17,7 @@ Task Manager monorepo: `backend/` (Express 5 + TypeScript ESM + Prisma 7 + Postg
 - No other comments unless the reason for the code isn't obvious.
 
 ## Feature flags
-- Only POST /tasks is behind `FEATURE_CREATE_TASK`, applied to that route in `task.routes.ts`. Do not add flags or touch `app.ts` unless asked.
+- No flags are active. `src/configs/features.ts` is an empty skeleton. Do not add flags unless asked.
 
 ## Commands (run in backend/)
 - `npx tsc --noEmit` typecheck
@@ -30,6 +30,7 @@ Route -> Controller -> Service -> Repository -> Prisma. See the `backend-layers`
 - Throw `AppError` subclasses from `src/errors/`. Never leak stack traces.
 - Error response shape: `{ "error": { "code", "message", "details"? } }`.
 - `validateRequest` (src/middleware/validateRequest.ts) runs before controllers. It replaces `req.body` with parsed data and puts parsed params in `res.locals.params`. Controllers read `req.body` and `res.locals.params.id`.
+- Routers register relative paths (`/`, `/:id`). `app.ts` mounts the task router at `/api/v1/tasks`. Do not change the mount.
 
 ## Task contract (v0.1.0)
 - Task: id, title (required), description?, status (TODO|IN_PROGRESS|DONE, default TODO),
