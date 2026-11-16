@@ -13,7 +13,7 @@ description: Use when creating or editing Express routes, controllers, services,
 - Express 5: async handlers that throw or reject are forwarded to errorHandler automatically. Do NOT wrap in try/catch or call next(err) just for that.
 - Validation runs in middleware (Zod schemas in `src/schemas/task.schema.ts`) before the controller. Controllers trust their input.
 - Status codes: 201 create, 200 read/update, 204 delete (no body), 400 validation, 404 not found, 500 unexpected.
-- Routes live under `/tasks`. PATCH for edits. DELETE `/tasks` clears all.
+- Routes live under `/api/v1/tasks`. PATCH for edits. DELETE `/api/v1/tasks` clears all.
 - Use `type` imports for types. Export named, not default.
 - Keep every function small and typed; no `any`.
 - Limits: title max 255, description max 5000 (constants in `src/schemas/task.schema.ts`). Never hardcode them elsewhere.
