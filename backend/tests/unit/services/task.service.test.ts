@@ -5,7 +5,7 @@ import { NotFoundError } from "@src/errors/AppError.js";
 
 // Mock repository
 vi.mock("@src/repositories/task.repository.ts", () => ({
-    taskRepository: { create: vi.fn(), findById: vi.fn() },
+    taskRepository: { create: vi.fn(), findById: vi.fn(), update: vi.fn() },
 }));
 
 describe("taskService.createTask", () => {
@@ -79,5 +79,44 @@ describe("taskService.findById", () => {
         vi.mocked(taskRepository.findById).mockResolvedValue(null);
 
         await expect(taskService.getTaskById(999)).rejects.toThrow(NotFoundError);
+    });
+});
+
+describe("taskService.updateTask", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("converts a dueDate string to a Date", async () => {
+        await taskService.updateTask(1, { dueDate: "2026-12-09" });
+
+        const data = vi.mocked(taskRepository.update).mock.calls[0][1];
+        expect(data.dueDate).toEqual(new Date("2026-12-09"));
+    });
+
+    it("passes null through so the column is cleared", async () => {
+        await taskService.updateTask(1, { dueDate: null, description: null });
+
+        const data = vi.mocked(taskRepository.update).mock.calls[0][1];
+        expect(data.dueDate).toBeNull();
+        expect(data.description).toBeNull();
+    });
+
+    it("leaves dueDate undefined when not provided, so it isn't touched", async () => {
+        await taskService.updateTask(1, { title: "New title" });
+
+        const data = vi.mocked(taskRepository.update).mock.calls[0][1];
+        expect(data.dueDate).toBeUndefined();
+    });
+
+    it("throws NotFoundError when Prisma reports P2025", async () => {
+        vi.mocked(taskRepository.update).mockRejectedValue(
+            new Prisma.PrismaClientKnownRequestError("Record not found", {
+                code: "P2025",
+                clientVersion: "7.10.1",
+            }),
+        );
+
+        await expect(taskService.updateTask(999, { title: "x" })).rejects.toThrow(NotFoundError);
     });
 });
