@@ -3,6 +3,14 @@ import type { Prisma } from "../generated/prisma/browser.js";
 
 export const taskRepository = {
     /**
+     * Keeps list ordering consistent at the data boundary so every caller gets
+     * the newest tasks first.
+     */
+    findAll() {
+        return prisma.task.findMany({ orderBy: { createdAt: "desc" } });
+    },
+    
+    /**
      * Updates only the fields present in `data`. Prisma skips `undefined`
      * fields and writes `null` as NULL. Throws P2025 when no row matches,
      * which the service translates into NotFoundError.
