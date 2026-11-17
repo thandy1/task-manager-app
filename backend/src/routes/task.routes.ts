@@ -7,6 +7,7 @@ import { features } from "../configs/features.js";
 export const taskRouter = Router();
 
 taskRouter.post("/", validateRequest(createTaskSchema, "body"), taskController.create);
+taskRouter.get("/", taskController.getAll);
 taskRouter.get("/:id", validateRequest(taskIdParamSchema, "params"), taskController.getById);
 if (features.updateTasks) {
     taskRouter.patch(

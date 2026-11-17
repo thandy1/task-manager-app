@@ -5,6 +5,14 @@ import { Prisma } from "../generated/prisma/client.js";
 
 export const taskService = {
     /**
+     * Lets the repository provide the complete list without adding business
+     * rules to a read operation that has none.
+     */
+    getAllTasks() {
+        return taskRepository.findAll();
+    },
+
+    /**
      * Applies a partial update. Convert dueDate to a Date (null stays null to clear it,
      * undefined stays undefined to leave it alone) and turns Prisma's "record not found"
      * error into a 404, so the repository stays a thin wrapper.
@@ -23,7 +31,7 @@ export const taskService = {
             throw err;
         }
     },
-
+    
     /**
      * Returns the task with the requested ID, or throws when the repository
      * reports that no matching task exists.
