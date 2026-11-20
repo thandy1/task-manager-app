@@ -6,7 +6,7 @@ import { Prisma } from "@src/generated/prisma/client.js";
 
 // Mock repository
 vi.mock("@src/repositories/task.repository.ts", () => ({
-    taskRepository: { create: vi.fn(), findById: vi.fn(), update: vi.fn() },
+    taskRepository: { create: vi.fn(), findById: vi.fn(), update: vi.fn(), findAll: vi.fn() },
 }));
 
 describe("taskService.createTask", () => {
@@ -122,5 +122,34 @@ describe("taskService.updateTask", () => {
         );
 
         await expect(taskService.updateTask(999, { title: "x" })).rejects.toThrow(NotFoundError);
+    });
+});
+
+describe("taskService.getAllTasks", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("returns the tasks provided by the repository", async () => {
+        const tasks = [
+            {"id": 2, "title": "Newer tasks"},
+            {"id": 1, "title": "Older task"},
+        ];
+        // `as never` just silences a type mismatch, since our fake objects dont have
+        // every Prisma field. It's fine in tests.
+        vi.mocked(taskRepository.findAll).mockResolvedValue(tasks as never);
+
+        const result = await taskService.getAllTasks();
+
+        expect(result).toEqual(tasks);
+        expect(taskRepository.findAll).toHaveBeenCalledTimes(1);
+    });
+
+    it("returns an empty array when there are no tasks", async () => {
+        vi.mocked(taskRepository.findAll).mockResolvedValue([]);
+
+        const result = await taskService.getAllTasks();
+
+        expect(result).toEqual([]);
     });
 });
