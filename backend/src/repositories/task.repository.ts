@@ -3,6 +3,22 @@ import type { Prisma } from "../generated/prisma/browser.js";
 
 export const taskRepository = {
     /**
+     * Lets the service rely on Prisma's missing-row error to distinguish a
+     * successful deletion from a task that no longer exists.
+     */
+    delete(id: number) {
+        return prisma.task.delete({ where: { id } });
+    },
+
+    /**
+     * Clears the collection in one database operation so an empty collection
+     * remains a successful clear operation.
+     */
+    deleteAll() {
+        return prisma.task.deleteMany();
+    },
+
+    /**
      * Keeps list ordering consistent at the data boundary so every caller gets
      * the newest tasks first.
      */

@@ -5,6 +5,29 @@ import { Prisma } from "../generated/prisma/client.js";
 
 export const taskService = {
     /**
+     * Converts Prisma's missing-row failure into the API's not-found error so
+     * callers receive the same response for tasks that cannot be deleted.
+     */
+    async deleteTask(id: number) {
+        try {
+            return await taskRepository.delete(id);
+        } catch (err) {
+            if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
+                throw new NotFoundError("Task not found");
+            }
+            throw err;
+        }
+    },
+
+    /**
+     * Treats clearing an already empty task collection as successful so the
+     * operation stays idempotent for callers.
+     */
+    clearAllTasks() {
+        return taskRepository.deleteAll();
+    },
+
+    /**
      * Lets the repository provide the complete list without adding business
      * rules to a read operation that has none.
      */

@@ -7,8 +7,10 @@ import { features } from "../configs/features.js";
 export const taskRouter = Router();
 
 taskRouter.post("/", validateRequest(createTaskSchema, "body"), taskController.create);
+taskRouter.delete("/", taskController.deleteAll);
 taskRouter.get("/", taskController.getAll);
 taskRouter.get("/:id", validateRequest(taskIdParamSchema, "params"), taskController.getById);
+taskRouter.delete("/:id", validateRequest(taskIdParamSchema, "params"), taskController.delete);
 if (features.updateTasks) {
     taskRouter.patch(
         "/:id",

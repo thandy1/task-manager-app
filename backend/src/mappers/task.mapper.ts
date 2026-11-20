@@ -1,5 +1,4 @@
-// Prisma-generated type
-import type { Task } from "../generated/prisma/client.js";
+import type { Task } from "../generated/prisma/client.js"; // Prisma-generated type
 
 // API response type
 // Omit is a typescript utility that creates a new type based on a existing type, but 

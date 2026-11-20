@@ -6,7 +6,7 @@ import { Prisma } from "@src/generated/prisma/client.js";
 
 // Mock repository
 vi.mock("@src/repositories/task.repository.ts", () => ({
-    taskRepository: { create: vi.fn(), findById: vi.fn(), update: vi.fn(), findAll: vi.fn() },
+    taskRepository: { create: vi.fn(), findById: vi.fn(), update: vi.fn(), findAll: vi.fn(), delete: vi.fn(), deleteAll: vi.fn() },
 }));
 
 describe("taskService.createTask", () => {
@@ -122,6 +122,51 @@ describe("taskService.updateTask", () => {
         );
 
         await expect(taskService.updateTask(999, { title: "x" })).rejects.toThrow(NotFoundError);
+    });
+});
+
+describe("taskService.deleteTask", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("calls the repository with the task ID and resolves on success", async () => {
+        vi.mocked(taskRepository.delete).mockResolvedValue(undefined as never);
+
+        await expect(taskService.deleteTask(1)).resolves.toBeUndefined();
+        expect(taskRepository.delete).toHaveBeenCalledWith(1);
+    });
+
+    it("throws NotFoundError when Prisma reports P2025", async () => {
+        vi.mocked(taskRepository.delete).mockRejectedValue(
+            new Prisma.PrismaClientKnownRequestError("Record not found", {
+                code: "P2025",
+                clientVersion: "7.10.1",
+            }),
+        );
+
+        await expect(taskService.deleteTask(999)).rejects.toThrow(NotFoundError);
+    });
+
+    it("rethrows errors other than Prisma P2025", async () => {
+        const error = new Error("Database unavailable");
+        vi.mocked(taskRepository.delete).mockRejectedValue(error);
+
+        await expect(taskService.deleteTask(1)).rejects.toBe(error);
+    });
+});
+
+describe("taskService.clearAllTasks", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    it("calls the repository deleteAll method once", async () => {
+        vi.mocked(taskRepository.deleteAll).mockResolvedValue({ count: 0 });
+
+        await taskService.clearAllTasks();
+
+        expect(taskRepository.deleteAll).toHaveBeenCalledTimes(1);
     });
 });
 
