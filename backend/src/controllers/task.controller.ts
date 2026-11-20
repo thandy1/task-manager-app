@@ -4,6 +4,24 @@ import { toTaskResponse } from "../mappers/task.mapper.js";
 
 export const taskController = {
     /**
+     * Uses the validated task ID to complete a deletion and return the API's
+     * empty success response.
+     */
+    async delete(_req: Request, res: Response) {
+        await taskService.deleteTask(res.locals.params.id);
+        res.status(204).send();
+    },
+
+    /**
+     * Clears the task collection and returns an empty success response,
+     * including when the collection was already empty.
+     */
+    async deleteAll(_req: Request, res: Response) {
+        await taskService.clearAllTasks();
+        res.status(204).send();
+    },
+
+    /**
      * Serializes every task through the shared response mapper so date-only
      * fields keep the same API shape as the single-task endpoint.
      */
