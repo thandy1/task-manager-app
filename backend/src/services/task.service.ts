@@ -2,6 +2,7 @@ import { taskRepository } from "../repositories/task.repository.js";
 import { NotFoundError } from "../errors/AppError.js";
 import type { CreateTaskInput, UpdateTaskInput } from "../schemas/task.schema.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { isRecordNotFound } from "@src/errors/prismaErrors.js";
 
 export const taskService = {
     /**
@@ -12,9 +13,7 @@ export const taskService = {
         try {
             return await taskRepository.delete(id);
         } catch (err) {
-            if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
-                throw new NotFoundError("Task not found");
-            }
+            if (isRecordNotFound(err)) throw new NotFoundError("Task not found");
             throw err;
         }
     },
@@ -48,9 +47,7 @@ export const taskService = {
                 dueDate: dueDate ? new Date(dueDate) : dueDate,
             });
         } catch (err) {
-            if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
-                throw new NotFoundError("Task not found");
-            }
+            if (isRecordNotFound(err)) throw new NotFoundError("Task not found");
             throw err;
         }
     },
