@@ -28,25 +28,39 @@ npx prisma db push      # Push schema without migrations
 ## Database Environments
 
 ### Development
-Uses `DATABASE_URL` from the backend `.env` file.
+Uses `DATABASE_URL` from `backend/.env`.
 
 ```bash
 npx prisma migrate dev --name <migration_name>
 ```
 
 ### Integration Testing
-Uses `TEST_DATABASE_URL` pointing to `taskmanagerdb_test`.
+Uses `DATABASE_URL` from `backend/.env.test`, which points to `taskmanagerdb_test`.
+Copy `.env.test.example` to `.env.test` and fill in your credentials.
 
 Apply existing migrations to the test database:
 
 ```bash
-DATABASE_URL="postgresql://taskmanager:taskmanager@localhost:5433/taskmanagerdb_test" npx prisma migrate deploy
+npx dotenv run -f .env.test -- npx prisma migrate deploy
+```
+
+Reset the test database (destructive, test DB only):
+
+```bash
+npx dotenv run -f .env.test -- npx prisma migrate reset
+```
+
+`dotenv run -f <file> -- <command>` is the dotenv v18 CLI syntax. The older
+`-e` flag from `dotenv-cli` does not work.
+
+### Database Tools
+```bash
+npx prisma studio       # Open database GUI
+npx prisma db pull      # Introspect existing database
 ```
 
 ### Important Notes
-
-- Use `migrate dev` when developing and creating migrations.
-- Use `migrate deploy` when applying existing migrations to test or production databases.
+- Use `migrate dev` to create migrations, and `migrate deploy` to apply existing ones (test DB and CI).
 - `migrate dev` automatically generates Prisma Client.
-- `migrate reset` is destructive and should never be run against production.
-- Avoid `db push` when using migration-based database management.
+- Never run `migrate reset` against anything but the test database.
+- Avoid `db push`, since this project uses migrations.
