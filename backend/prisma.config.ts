@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
 
+// Prisma configuration, it's cli discovers and loads it automatically.
 export default defineConfig({
   // Where the schema file lives.
   // Prisma generates client methods based on file.
