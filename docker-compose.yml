@@ -1,3 +1,4 @@
+# Starts the PostgreSQL local development database
 services:
   db:
     image: postgres:16

@@ -20,6 +20,29 @@ jobs:
       defaults:
         run:
           working-directory: backend
+      
+      services: 
+        postgres:
+          image: postgres:16
+          env:
+            POSTGRES_USER: taskmanager
+            POSTGRES_PASSWORD: taskmanager
+            POSTGRES_DB: taskmanagerdb_test
+          # GitHub maps the PostgreSQL container's port 5432 to the runner's localhost:5432.
+          ports:
+            - 5432:5432
+          # Health checks: without it, tests can start before Postgres accepts
+          # connections.
+          options: >-
+            --health-cmd "pg_isready -U taskmanager"
+            --health-interval 5s
+            --health-timeout 5s
+            --health-retries 10
+
+      # Job-level `env` so every step uses the test database.
+      env:
+        DATABASE_URL: "postgresql://taskmanager:taskmanager@localhost:5432/taskmanagerdb_test"
+        FEATURE_UPDATE_TASK: "false"
           
       steps:
         - name: Check out repository
@@ -37,8 +60,9 @@ jobs:
         
         - name: Generate Prisma Client
           run: npx prisma generate
-          env:
-            DATABASE_URL: postgresql://user:password@localhost:5432/placeholder
+        
+        - name: Apply migrations
+          run: npx prisma migrate deploy
         
         - name: Typecheck
           run: npm run typecheck
