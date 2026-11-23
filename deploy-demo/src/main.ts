@@ -32,6 +32,11 @@ async function main() {
       </section>
     `;
   }
+
+  // Slot label
+  // Baked in at build time: shows which prefix this build was deployed to.
+  const slot = import.meta.env.VITE_DEPLOY_SLOT ?? "local";
+  app.innerHTML += `<footer><small>Deployed slot: ${slot}</small></footer>`;
 }
 
 main();

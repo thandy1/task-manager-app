@@ -11,7 +11,7 @@ jobs:
   # runtime-specific differences: a dependency or built-in API that behaves
   # differently, or a feature that exists in one Node major but not the other.
     test-matrix:
-      name: backend-tests (node ${{ matrix.node-version }}
+      name: backend-tests (node ${{ matrix.node-version }})
       runs-on: ubuntu-latest
       strategy:
         fail-fast: false
