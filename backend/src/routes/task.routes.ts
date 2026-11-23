@@ -11,7 +11,7 @@ taskRouter.delete("/", taskController.deleteAll);
 taskRouter.get("/", taskController.getAll);
 taskRouter.get("/:id", validateRequest(taskIdParamSchema, "params"), taskController.getById);
 taskRouter.delete("/:id", validateRequest(taskIdParamSchema, "params"), taskController.delete);
-if (features.updateTasks) {
+if (features.updateTask) {
     taskRouter.patch(
         "/:id",
         validateRequest(taskIdParamSchema, "params"),
