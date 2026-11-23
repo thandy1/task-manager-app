@@ -3,8 +3,12 @@ import express from "express";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import { taskRouter } from "./routes/task.routes.js";
+import { requestMetrics } from "./middleware/requestMetrics.js";
 
 export const app = express();
+
+// 
+app.use(requestMetrics);
 
 // Parses JSON request bodies into req.body.
 // Malformed JSON is passed on to the error handler.
