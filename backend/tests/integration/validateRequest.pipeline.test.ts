@@ -24,7 +24,7 @@ const buildApp = () => {
   return app;
 };
 
-describe("validateRequest (in the Express pipeline", () => {
+describe("validateRequest (in the Express pipeline)", () => {
   it("returns 400 in the NFR1 error shape for an invalid body", async () => {
     const app = buildApp();
     const res = await request(app).post("/tasks").send({ title: ""});
