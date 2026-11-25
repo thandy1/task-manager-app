@@ -1,32 +1,43 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError, ValidationError, ValidationDetail, NotFoundError } from "../errors/AppError.js";
+import { AppError } from "../errors/AppError.js";
+import { logger } from "../lib/logger.js";
+
 // Error Handler Middleware, first parameter must be an error so express recognizes it.
 // centralizes error handling and builds appropriate response to the client.
 // Express recognizes an error handler by its FOUR parameters, so `_next`
 // must stay even though we don't use it.
 export function errorHandler(
     err: unknown, // error being passed
-    _req: Request, // incoming request
-    res: Response, // outgoing response
-    _next: NextFunction, // continue processing
+    req: Request, 
+    res: Response, 
+    _next: NextFunction, 
 ) {
-    // Errors thrown on purpose.
+    // Errors thrown on purpose (validation, not found). Expected, so `warn` (4xx), not `error` (500).
     if (err instanceof AppError) {
+        logger.warn({
+            code: err.code, status: err.statusCode, method: req.method, path: req.originalUrl
+        }, "request rejected",);
+
         res.status(err.statusCode).json({
             error: {
                 code: err.code,
                 message: err.message,
-                // If details exist, add a details property to this response object. Otherwise, leave it out.
+                // If details exist, add a details property to the response object. 
                 ...(err.details && { details: err.details}),
             },
         });
         return;
     }
 
-    // Malformed JSON body: express.json() throws this before any route runs.
-    // Does this error have a type property equal to entity.parse.failed?
-    // Think of `type` as an alias for `err` since we dont know what type `err` is.
+    // Malformed JSON check
+    // Type assertion: "Treat err as an object that may have a type property,
+    // and if it does, that property is a string."
+    // Check whether the error's type property exactly matches "entity.parsed.failed".
     if ((err as { type?: string }).type === "entity.parse.failed") {
+        logger.warn({ 
+            code: "INVALID_JSON", status: 400, method: req.method, path: req.originalUrl
+        }, "request rejected",);
+
         res.status(400).json({
             error: { 
                 code: "INVALID_JSON", 
@@ -36,9 +47,8 @@ export function errorHandler(
         return;
     }
 
-    // Anything else is a bug. Log the full error for ourselves, but send the 
-    // client a generic message: no stack trace or internals (NFR1).
-    console.log(err);
+    // Unexpected bug: log the full error for us, send the client nothing internal (NFR1).
+    logger.error({ err, method: req.method, path: req.originalUrl}, "unhandled error")
     res.status(500).json({
         error: { 
             code: "INTERNAL_ERROR", 
