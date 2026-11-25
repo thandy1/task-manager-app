@@ -15,5 +15,7 @@ const adapter = new PrismaPg({
 // "log" prints every SQL statement Prisma runs to the terminal.
 export const prisma = new PrismaClient({
   adapter,
-  log: ["query", "warn", "error"],
+  log: process.env.NODE_ENV !== "test" 
+    ? ["query", "warn", "error"]
+    : ["warn", "error"],
 });
