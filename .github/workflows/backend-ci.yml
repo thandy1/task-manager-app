@@ -42,7 +42,6 @@ jobs:
       # Job-level `env` so every step uses the test database.
       env:
         DATABASE_URL: "postgresql://taskmanager:taskmanager@localhost:5432/taskmanagerdb_test"
-        FEATURE_UPDATE_TASK: "false"
           
       steps:
         - name: Check out repository
