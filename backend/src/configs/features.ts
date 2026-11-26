@@ -5,8 +5,8 @@
 // To add a flag:
 //   1. Add an entry here:  myFeature: process.env.FEATURE_MY_FEATURE === "true",
 //   2. Add FEATURE_MY_FEATURE=false to .env.example
-//   3. Gate the route:     if (features.myFeature) { router.post(...) }
-//   4. Delete all three once the feature is finished.
+//   3. Add FEATURE_MY_FEATURE=false to vitest.config.ts
+//   4. Gate the route:     if (features.myFeature) { router.post(...) }
+//   5. Delete all four once the feature is finished.
 export const features = {
-    updateTasks: process.env.FEATURE_UPDATE_TASK === "true",
 };

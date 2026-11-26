@@ -12,8 +12,10 @@ const adapter = new PrismaPg({
 });
 
 // One shared client instance for the whole app. Thin Prisma Wrapper.
-// "log" prints every SQL statement Prisma runs to the terminal.
+// `log` property prints output to the console depending on the given option.
 export const prisma = new PrismaClient({
   adapter,
-  log: ["query", "warn", "error"],
+  log: process.env.NODE_ENV !== "test" 
+    ? ["query", "warn", "error"]
+    : ["warn", "error"],
 });

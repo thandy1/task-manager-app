@@ -7,7 +7,8 @@ import { requestMetrics } from "./middleware/requestMetrics.js";
 
 export const app = express();
 
-// 
+// Request metrics middleware that starts a timer on each request and calculates the
+// duration of its lifecycle once it returns a response.
 app.use(requestMetrics);
 
 // Parses JSON request bodies into req.body.
@@ -19,7 +20,6 @@ app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
 });
 
-// Mount path
 // All task endpoints live under /api/v1/tasks.
 app.use("/api/v1/tasks", taskRouter);
 
