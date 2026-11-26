@@ -27,7 +27,11 @@ export default defineConfig(({ mode }) => ({
         // Tell Vitest which source files to measure and which to exclude.
         coverage: {
             include: ["src/**/*.ts"],
-            exclude: ["src/generated/**", "src/server.ts"],
+            exclude: [
+                "src/generated/**", 
+                "src/server.ts",
+                "src/configs/features.ts" // // reserved for v0.2.0 feature flags, not used in the MVP
+            ],
         },
     },
 }));

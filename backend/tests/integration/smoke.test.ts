@@ -1,5 +1,5 @@
 import { app } from "@src/app.js";
-import { beforeEach, afterAll, describe, it, expect, expectTypeOf } from "vitest";
+import { beforeEach, afterAll, describe, it, expect } from "vitest";
 import request from "supertest";
 import { resetDatabase, closeDatabase } from "../helpers/db.js";
 import { TASKS_URL } from "../helpers/routes.js";
