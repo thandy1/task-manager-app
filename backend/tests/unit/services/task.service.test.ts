@@ -123,6 +123,13 @@ describe("taskService.updateTask", () => {
 
         await expect(taskService.updateTask(999, { title: "x" })).rejects.toThrow(NotFoundError);
     });
+
+    it("rethrows errors other than Prisma P2025", async () => {
+        const error = new Error("Database unavailable");
+        vi.mocked(taskRepository.update).mockRejectedValue(error);
+
+        await expect(taskService.updateTask(1, { title: "x" })).rejects.toBe(error);
+    });
 });
 
 describe("taskService.deleteTask", () => {
