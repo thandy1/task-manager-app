@@ -42,9 +42,9 @@ export const updateTaskSchema = createTaskSchema
             .string()
             .trim()
             .max(DESCRIPTION_MAX)
+            .transform((value) => (value === "" ? null : value))
             .nullable()
-            .optional()
-            .transform((value) => (value === "" ? null : value)),
+            .optional(),
         dueDate: z.iso
             .date("Due date must be in YYYY-MM-DD format")
             .nullable()
