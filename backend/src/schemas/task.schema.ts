@@ -22,14 +22,16 @@ export const createTaskSchema = z.object({
         .string()
         .trim()
         .max(DESCRIPTION_MAX)
-        .optional()
-        .transform((value) => (value === "" ? null : value)),
+        .transform((value) => (value === "" ? null : value))
+        .nullable()
+        .optional(),
     status: taskStatusSchema
         .optional(), // DB provides default to `TODO`
     priority: taskPrioritySchema
         .optional(), // DB provides default to `LOW`
     dueDate: z.iso
         .date("Due date must be in YYYY-MM-DD format")
+        .nullable()
         .optional(),
 });
 
@@ -69,10 +71,10 @@ export const taskIdParamSchema = z.object({
 
     type CreateTaskInput = {
         title: string;
-        description?: string | undefined;
+        description?: string | null | undefined;
         status?: "TODO" | "IN_PROGRESS" | "DONE" | undefined;
         priority?: "LOW" | "MEDIUM" | "HIGH" | undefined;
-        dueDate?: string | undefined;
+        dueDate?: string | null | undefined;
     };
 
     type UpdateTaskInput = {
