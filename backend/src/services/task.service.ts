@@ -1,7 +1,7 @@
 import { taskRepository } from "../repositories/task.repository.js";
 import { NotFoundError } from "../errors/AppError.js";
 import type { CreateTaskInput, UpdateTaskInput } from "../schemas/task.schema.js";
-import { isRecordNotFound } from "@src/errors/prismaErrors.js";
+import { isRecordNotFound } from "../errors/prismaErrors.js";
 
 export const taskService = {
     /**
