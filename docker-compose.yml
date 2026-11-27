@@ -1,5 +1,6 @@
-# Starts the PostgreSQL local development database
+# Local development compose stack for the Task Manager app
 services:
+  # PostgreSQL database container(also hosts the test DB for integration tests)
   db:
     image: postgres:16
     container_name: taskmanager-db
@@ -16,6 +17,33 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  # One-off job: applies Prisma migrations, then exits
+  migrate:
+    build:
+      context: ./backend
+      target: build
+    command: ["npx", "prisma", "migrate", "deploy"]
+    environment:
+      DATABASE_URL: postgresql://taskmanager:taskmanager@db:5432/taskmanagerdb
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Express API Container (runtime stage of the Dockerfile)
+  api:
+    build:
+      context: ./backend
+      target: runtime
+    container_name: taskmanager-api
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://taskmanager:taskmanager@db:5432/taskmanagerdb
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
 volumes:
   pgdata:
