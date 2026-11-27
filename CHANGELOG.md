@@ -13,9 +13,12 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 - OpenAPI documentation and contract tests.
 - Prisma Client for Task model.
 - Zod schema for creating, updating, and retrieving by ID.
+- Multi-stage Dockerfile for the backend API (non-root runtime user, production dependencies only).
+- Docker Compose `migrate` and `api` services; `docker compose up` now starts the database, applies migrations, and runs the API.
 
 ### Changed
 ### Fixed
+- Production build crashed on startup because a `@src/` path alias was not resolved in compiled output.
 
 [Unreleased]: https://github.com/thandy1/task-manager-app/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/thandy1/task-manager-app/releases/tag/v0.1.0
