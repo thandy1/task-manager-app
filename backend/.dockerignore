@@ -1,0 +1,11 @@
+# Ignores these files when sending the project files into the build process
+node_modules
+dist
+coverage
+.env
+.env.*
+!.env.example
+.git
+*.log
+Dockerfile
+.dockerignore
