@@ -1,83 +1,166 @@
 name: Backend CI
 
-on: 
-    push:
-    pull_request: 
-      branches: 
-        - main
+# WHEN THIS RUNS (trunk-based development: nobody pushes to main directly)
+# - pull_request -> main: runs on every PR update (opened, new commits,
+#   reopened) against the MERGE RESULT of the branch and main. This is the
+#   gate: branch protection requires it to pass before a PR can merge.
+# - push -> main: fires when a PR is merged. Merging creates a push event on
+#   main, and the pull_request event does NOT fire on merge. This re-verifies
+#   the final merged code and gives the README badge a run to display.
+# Feature branches are not listed: pushing one does nothing until a PR is open.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  # Runs the suite on Node 22 (older LTS) and 24 (local dev version) to catch
-  # runtime-specific differences: a dependency or built-in API that behaves
-  # differently, or a feature that exists in one Node major but not the other.
-    test-matrix:
-      name: backend-tests (node ${{ matrix.node-version }})
-      runs-on: ubuntu-latest
-      strategy:
-        fail-fast: false
-        matrix:
-          node-version: [22, 24]
-      defaults:
-        run:
-          working-directory: backend
-      
-      services: 
-        postgres:
-          image: postgres:16
-          env:
-            POSTGRES_USER: taskmanager
-            POSTGRES_PASSWORD: taskmanager
-            POSTGRES_DB: taskmanagerdb_test
-          # GitHub maps the PostgreSQL container's port 5432 to the runner's localhost:5432.
-          ports:
-            - 5432:5432
-          # Health checks: without it, tests can start before Postgres accepts
-          # connections.
-          options: >-
-            --health-cmd "pg_isready -U taskmanager"
-            --health-interval 5s
-            --health-timeout 5s
-            --health-retries 10
+  # JOB 1: tests (unit + integration) against a real Postgres.
+  # Runs on Node 22 (older LTS) and 24 (local dev version) to catch
+  # runtime-specific differences. fail-fast is off so one failing Node version
+  # doesn't hide the result of the other.
+  test-matrix:
+    name: backend-tests (node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
 
-      # Job-level `env` so every step uses the test database.
-      env:
-        DATABASE_URL: "postgresql://taskmanager:taskmanager@localhost:5432/taskmanagerdb_test"
-          
-      steps:
-        - name: Check out repository
-          uses: actions/checkout@v5
-        
-        - name: Set up Node ${{ matrix.node-version }}
-          uses: actions/setup-node@v5
-          with: 
-            node-version: ${{ matrix.node-version}}
-            cache: npm
-            cache-dependency-path: backend/package-lock.json
+    # Every `run` step below executes inside backend/ unless it says otherwise.
+    defaults:
+      run:
+        working-directory: backend
 
-        - name: Install dependencies
-          run: npm ci
-        
-        - name: Generate Prisma Client
-          run: npx prisma generate
-        
-        - name: Apply migrations
-          run: npx prisma migrate deploy
-        
-        - name: Typecheck
-          run: npm run typecheck
-        
-        - name: Run tests
-          run: npm run test
+    # A throwaway Postgres container that lives only for this job.
+    # POSTGRES_DB creates the test database, so no setup script is needed.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: taskmanager
+          POSTGRES_PASSWORD: taskmanager
+          POSTGRES_DB: taskmanagerdb_test
+        # Maps the container's 5432 to localhost:5432 on the runner.
+        ports:
+          - 5432:5432
+        # Without a health check, tests can start before Postgres accepts
+        # connections. GitHub waits for "healthy" before running any step.
+        options: >-
+          --health-cmd "pg_isready -U taskmanager"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
-    backend-tests:
-        name: backend-tests
-        needs: test-matrix
+    # Job-level env: every step (migrate, tests) talks to the test database.
+    # Host is localhost because the service port is mapped onto the runner.
+    env:
+      DATABASE_URL: "postgresql://taskmanager:taskmanager@localhost:5432/taskmanagerdb_test"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          # Caches npm downloads, keyed on the lockfile.
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      # npm ci installs exactly what the lockfile says and fails if
+      # package.json and the lockfile disagree (unlike npm install).
+      - name: Install dependencies
+        run: npm ci
+
+      # The Prisma client is generated code (src/generated, not committed),
+      # so it must be generated before typecheck or tests can import it.
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      # Creates the schema in the empty CI database from prisma/migrations.
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test
+
+  # JOB 2: aggregator. The matrix produces check names that change with the
+  # Node versions. This job gives branch protection ONE stable name
+  # ("backend-tests") to require. `if: always()` makes it run even when the
+  # matrix fails, so it reports failure instead of showing "skipped".
+  backend-tests:
+    name: backend-tests
+    needs: test-matrix
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any matrix leg failed
+        run: |
+          if [ "${{ needs.test-matrix.result }}" != "success" ]; then
+            echo "Matrix result: ${{ needs.test-matrix.result }}"
+            exit 1
+          fi
+
+  # JOB 3: build the real artifact and smoke-test it.
+  # WHY THIS EXISTS: the test job runs TypeScript source through Vitest, which
+  # resolves the @src/ alias itself. Only the compiled output in the Docker
+  # image exposed the alias bug, so this job runs the way production runs:
+  # compile, containerize, start, send a real request.
+  # Runs from the repo root (no working-directory) because it uses
+  # docker-compose.yml. It's independent of test-matrix, so both run in parallel.
+  docker-build:
+    name: docker-build
+    runs-on: ubuntu-latest
+    # One place to change the API base path. Steps read it as $API_BASE.
+    env:
+      API_BASE: http://localhost:3000/api/v1
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      # Builds the db, migrate and api services and starts the chain:
+      # db healthy -> migrate exits 0 -> api starts (the depends_on rules in
+      # docker-compose.yml). If the image fails to build, or migrations fail,
+      # this step fails.
+      - name: Build and start the stack
+        run: docker compose up --build -d api
+
+      # Readiness: `up -d` returns when containers START, not when the server
+      # is listening, so retry /health for up to ~30s. --fail makes curl exit
+      # non-zero on any HTTP error. /health does not touch the DB, so this
+      # step only proves the compiled app boots.
+      - name: Wait for the API to be ready
+        run: |
+          for i in $(seq 1 15); do
+            if curl --fail --silent --show-error http://localhost:3000/health; then
+              echo
+              echo "API is up"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 2s..."
+            sleep 2
+          done
+          echo "API never became ready"
+          exit 1
+
+      # Database check: this endpoint needs a working connection and the
+      # migrated tasks table, so a bad DATABASE_URL or failed migration fails
+      # CI even though /health passed.
+      - name: Verify database connectivity
+        run: curl --fail --silent --show-error $API_BASE/tasks > /dev/null
+      # Runs only on failure, so the log shows WHY (crash trace, bad migration).
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs
+
+      # Always tear down, including the volume (-v), for a clean runner.
+      - name: Tear down
         if: always()
-        runs-on: ubuntu-latest
-        steps:
-          - name: Fail if any matrix leg failed
-            run: |
-                if [ "${{ needs.test-matrix.result }}" != "success" ]; then
-                  echo "Matrix result: ${{ needs.test-matrix.result }}"
-                  exit 1
-                fi
+        run: docker compose down -v
