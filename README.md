@@ -2,13 +2,8 @@
 
 A full-stack task management application.
 
-
-## Stack
-
-- Frontend: React
-- Backend: Java + Spring Boot
-- Database: PostgreSQL
-
 ## Status
 
 In development — MVP in progress.
+
+![Backend CI](https://github.com/thandy1/task-manager-app/actions/workflows/backend-ci.yml/badge.svg?branch=main)
