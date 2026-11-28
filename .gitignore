@@ -1,5 +1,7 @@
 # Documentation
 docs/*
+docs/notes.md
+docs/plan.md
 
 # Archived projects
 /backend-spring-old/
